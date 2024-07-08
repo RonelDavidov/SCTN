@@ -96,6 +96,7 @@ class SCTNeuron:
         emit_spike = self._kernel(pre_spikes, enable)
         self._learn(pre_spikes, emit_spike)
         self._log_cycle(emit_spike)
+        return emit_spike
 
     def _kernel(self, f, enable):
         if enable:
