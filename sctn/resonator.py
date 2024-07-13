@@ -1,5 +1,6 @@
 import json
 import os
+from pathlib import Path
 
 import numpy as np
 
@@ -10,14 +11,14 @@ from sctn.spiking_neuron import IDENTITY, create_SCTN, BINARY
 
 
 def create_base_resonator_by_parameters(
-        freq0,
-        clk_freq,
-        lf,
-        theta_input,
-        theta,
-        weight_input,
-        weight_feedback,
-        weight,
+    freq0,
+    clk_freq,
+    lf,
+    theta_input,
+    theta,
+    weight_input,
+    weight_feedback,
+    weight,
 ):
     LF = lf
     LP = lp_by_lf(LF, freq0, clk_freq)
@@ -31,7 +32,9 @@ def create_base_resonator_by_parameters(
 
     # SCTN 1
     neuron = create_SCTN()
-    neuron.synapses_weights = np.array([weight_input, -weight_feedback], dtype=np.float64)
+    neuron.synapses_weights = np.array(
+        [weight_input, -weight_feedback], dtype=np.float64
+    )
     neuron.leakage_factor = LF
     neuron.leakage_period = LP
     neuron.theta = theta_input
@@ -53,14 +56,9 @@ def create_base_resonator_by_parameters(
     network.connect_by_id(4, 1)
     return network
 
+
 def _create_base_resonator_by_parameters(
-        freq0,
-        clk_freq,
-        LF,
-        LP,
-        theta_gain,
-        weight_gain,
-        amplitude_gain
+    freq0, clk_freq, LF, LP, theta_gain, weight_gain, amplitude_gain
 ):
     if LF == -1 or LP == -1:
         LF, LP = suggest_lf_lp(freq0, clk_freq)
@@ -73,7 +71,9 @@ def _create_base_resonator_by_parameters(
 
     # SCTN 1
     neuron = create_SCTN()
-    neuron.synapses_weights = np.array([10 * weight_gain[0], -10 * weight_gain[1]], dtype=np.float64)
+    neuron.synapses_weights = np.array(
+        [10 * weight_gain[0], -10 * weight_gain[1]], dtype=np.float64
+    )
     neuron.leakage_factor = LF
     neuron.leakage_period = LP
     neuron.theta = -1 * theta_gain[0]
@@ -100,25 +100,36 @@ def _create_base_resonator_by_parameters(
 
 def create_base_resonator(freq0, clk_freq):
     f_parameters_resonator = int(freq0 * 1536000 / clk_freq)
-    with open(f'../filters2/clk_1536000/parameters/f_{f_parameters_resonator}.json') as f:
+    with open(
+        f"../filters2/clk_1536000/parameters/f_{f_parameters_resonator}.json"
+    ) as f:
         parameters = json.load(f)
-    return create_base_resonator_by_parameters(freq0, clk_freq,
-                                               lf=parameters['lf'],
-                                               theta_input=parameters['theta_input'],
-                                               theta=parameters['theta'],
-                                               weight_input=parameters['weight_input'],
-                                               weight_feedback=parameters['weight_feedback'],
-                                               weight=parameters['weight']
-                                               )
+    return create_base_resonator_by_parameters(
+        freq0,
+        clk_freq,
+        lf=parameters["lf"],
+        theta_input=parameters["theta_input"],
+        theta=parameters["theta"],
+        weight_input=parameters["weight_input"],
+        weight_feedback=parameters["weight_feedback"],
+        weight=parameters["weight"],
+    )
+
+
 def _create_base_resonator(freq0, clk_freq):
-    with open(f'../filters/clk_{clk_freq}/parameters/f_{freq0}.json') as f:
+    with open(f"../filters/clk_{clk_freq}/parameters/f_{freq0}.json") as f:
         parameters = json.load(f)
-    th_gains = [parameters[f'th_gain{i}'] for i in range(4)]
-    weighted_gains = [parameters[f'weight_gain{i}'] for i in range(5)]
-    return _create_base_resonator_by_parameters(freq0, clk_freq,
-                                               parameters['LF'], parameters['LP'],
-                                               th_gains, weighted_gains,
-                                               parameters['amplitude_gain'])
+    th_gains = [parameters[f"th_gain{i}"] for i in range(4)]
+    weighted_gains = [parameters[f"weight_gain{i}"] for i in range(5)]
+    return _create_base_resonator_by_parameters(
+        freq0,
+        clk_freq,
+        parameters["LF"],
+        parameters["LP"],
+        th_gains,
+        weighted_gains,
+        parameters["amplitude_gain"],
+    )
 
 
 def create_excitatory_resonator(freq0, clk_freq):
@@ -148,73 +159,44 @@ def create_excitatory_inhibitory_resonator(freq0, clk_freq):
     network.add_network(inh_resonator)
 
     neuron = create_SCTN()
-    neuron.synapses_weights = np.array([1., -.8])
+    neuron.synapses_weights = np.array([1.0, -0.8])
     neuron.leakage_period = np.inf
     neuron.threshold_pulse = 3
     neuron.activation_function = BINARY
     neuron.reset_to = 2
     neuron.min_clip = 0
-    neuron.label = 'f' + str(freq0)
+    neuron.label = "f" + str(freq0)
 
     network.add_layer(SCTNLayer([neuron]))
 
     return network
 
 
-def trained_resonator(freq0, filters_folder='filters4'):
-    clk_freq = 1536
-    f = freq0
-    while f > 1:
-        f /= 10
-        clk_freq *= 10
+def resonator(freq0, clk_freq) -> SpikingNetwork:
     configured_freq = freq0 * 1_536_000 / clk_freq
-    root_folder = f'../{filters_folder}/clk_1536000/parameters/'
+    root_folder = Path(__file__).parent / "resonators_params" / "parameters"
     available_resonators = np.array([int(f[2:-5]) for f in os.listdir(root_folder)])
     arg_chosen_resonator = np.argmin(np.abs(available_resonators - configured_freq))
     chosen_resonator = available_resonators[arg_chosen_resonator]
-    with open(f'{root_folder}/f_{chosen_resonator}.json') as f:
+    with open(f"{root_folder}/f_{chosen_resonator}.json") as f:
         parameters = json.load(f)
-        thetas = parameters['thetas']
-        weights = parameters['weights']
-        lf = parameters['lf']
+        thetas = parameters["thetas"]
+        weights = parameters["weights"]
+        lf = parameters["lf"]
 
     return simple_resonator(freq0, clk_freq, lf, thetas, weights)
 
 
-def delta_resonator(freq0, filters_folder='filters4'):
-    resonator = trained_resonator(freq0, filters_folder)
-    neuron = create_SCTN()
-    neuron.synapses_weights = np.array([3.0])
-    neuron.leakage_period = np.inf
-    neuron.theta = -1
-    neuron.threshold_pulse = 3
-    neuron.reset_to = 1.5
-    neuron.activation_function = BINARY
-    resonator.add_layer(SCTNLayer([neuron]))
-
-    neuron = create_SCTN()
-    neuron.synapses_weights = np.array([10.0])
-    neuron.leakage_period = np.inf
-    neuron.theta = 0
-    neuron.leakage_factor = 1
-    neuron.leakage_period = 1
-    neuron.threshold_pulse = 30
-    neuron.reset_to = 10
-    neuron.activation_function = BINARY
-    resonator.add_layer(SCTNLayer([neuron]))
-    return resonator
-
-
 def simple_resonator(
-        freq0,
-        clk_freq,
-        lf,
-        thetas,
-        weights,
-):
+    freq0,
+    clk_freq,
+    lf,
+    thetas,
+    weights,
+) -> SpikingNetwork:
     LF = lf
     LP = lp_by_lf(LF, freq0, clk_freq)
-    network = SpikingNetwork(clk_freq)
+    network = SpikingNetwork()
     network.add_amplitude(1000)
 
     # Encode to pdm
@@ -234,10 +216,10 @@ def simple_resonator(
 
     for i in range(3):
         neuron = create_SCTN()
-        neuron.synapses_weights = np.array([weights[2+i]], dtype=np.float64)
+        neuron.synapses_weights = np.array([weights[2 + i]], dtype=np.float64)
         neuron.leakage_factor = LF
         neuron.leakage_period = LP
-        neuron.theta = thetas[1+i]
+        neuron.theta = thetas[1 + i]
         neuron.activation_function = IDENTITY
         neuron.membrane_should_reset = False
         network.add_layer(SCTNLayer([neuron]))
@@ -246,15 +228,25 @@ def simple_resonator(
     network.connect_by_id(4, 1)
     return network
 
+
 @njit
-def test_resonator_on_chirp(network, test_size=10_000_000, start_freq=0, step=1 / 200000, clk_freq=1536000, amplifier=1):
+def test_resonator_on_chirp(
+    network,
+    test_size=10_000_000,
+    start_freq=0,
+    step=1 / 200000,
+    clk_freq=1536000,
+    amplifier=1,
+):
     batch_size = 50_000
     shift = 0
     while test_size > 0:
         sine_size = min(batch_size, test_size)
-        sine_wave, freqs = create_chirp_signal(sine_size, clk_freq, start_freq, step, shift)
+        sine_wave, freqs = create_chirp_signal(
+            sine_size, clk_freq, start_freq, step, shift
+        )
 
-        network.input_full_data(amplifier*sine_wave)
+        network.input_full_data(amplifier * sine_wave)
 
         shift = freqs[-1]
         start_freq += sine_size * step
@@ -263,15 +255,14 @@ def test_resonator_on_chirp(network, test_size=10_000_000, start_freq=0, step=1 
 
 @njit
 def create_chirp_signal(test_size, clk_freq, start_freq, step, shift):
-    sine_wave = (np.arange(test_size) * step + start_freq + step)
+    sine_wave = np.arange(test_size) * step + start_freq + step
     sine_wave = sine_wave * 2 * np.pi / clk_freq
     sine_wave = np.cumsum(sine_wave) + shift  # phase
     return np.sin(sine_wave), sine_wave
 
 
-@njit
 def freq_of_resonator(clk_freq, LF, LP):
-    return clk_freq / ((2 ** LF) * 2 * np.pi * (1 + LP))
+    return clk_freq / ((2**LF) * 2 * np.pi * (1 + LP))
 
 
 def all_lf_lp_options(lf_size, lp_size, clk_freq):
@@ -285,7 +276,7 @@ def all_lf_lp_options(lf_size, lp_size, clk_freq):
 
 
 def lp_by_lf(lf, freq0, clk_freq):
-    return int((clk_freq / ((2 ** lf) * 2 * np.pi * freq0)) - 1)
+    return int((clk_freq / ((2**lf) * 2 * np.pi * freq0)) - 1)
 
 
 def lf_lp_options(freq0, clk_freq):
@@ -293,7 +284,9 @@ def lf_lp_options(freq0, clk_freq):
     # find the parameter that will give the closest frequency as the desired frequency
     indices = np.argmin(np.abs(freqs_options - freq0), axis=1)
     usable_lf_lp_options = np.array(list(zip(np.arange(10), indices)))
-    best_lp_option = np.array([freqs_options[int(opt[0]), int(opt[1])] for opt in usable_lf_lp_options])
+    best_lp_option = np.array(
+        [freqs_options[int(opt[0]), int(opt[1])] for opt in usable_lf_lp_options]
+    )
     res = np.zeros((len(best_lp_option), 3))
     res[:, :2] = usable_lf_lp_options
     res[:, 2] = best_lp_option
