@@ -12,6 +12,11 @@ def parse_requirements(filename):
         return lines
 
 
+requirements = parse_requirements('requirements.txt')
+
+# Separate git dependencies from regular ones
+install_requires = [req for req in requirements if not req.startswith("git+")]
+dependency_links = [req for req in requirements if req.startswith("git+")]
 # Setting up
 setup(
     # the name must match the folder name 'verysimplemodule'
@@ -21,14 +26,12 @@ setup(
     author_email="yakir4123@email.com>",
     description=DESCRIPTION,
     packages=find_packages(),
-    install_requires=parse_requirements('requirements.txt'),
+    install_requires=install_requires,
     keywords=['python', 'snn', 'ai'],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Education",
         "Programming Language :: Python :: 3",
     ],
-    dependency_links=[
-        'git+https://github.com/BindsNET/bindsnet.git#egg=bindsnet'
-    ]
+    dependency_links=dependency_links
 )
