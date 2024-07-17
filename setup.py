@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages, glob
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 DESCRIPTION = "Spiking Continues Time Neuron"
 LONG_DESCRIPTION = "A Spiking Neural Network implementation using "
 
