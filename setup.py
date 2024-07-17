@@ -1,18 +1,18 @@
-from setuptools import setup, find_packages
+from setuptools import setup, find_packages, glob
 
-VERSION = '0.1.1'
-DESCRIPTION = 'Spiking Continues Time Neuron'
-LONG_DESCRIPTION = 'A Spiking Neural Network implementation using '
+VERSION = "0.1.2"
+DESCRIPTION = "Spiking Continues Time Neuron"
+LONG_DESCRIPTION = "A Spiking Neural Network implementation using "
 
 
 def parse_requirements(filename):
-    with open(filename, 'r') as file:
+    with open(filename, "r") as file:
         lines = file.readlines()
         lines = [line.strip() for line in lines if line and not line.startswith("#")]
         return lines
 
 
-requirements = parse_requirements('requirements.txt')
+requirements = parse_requirements("requirements.txt")
 
 # Separate git dependencies from regular ones
 install_requires = [req for req in requirements if not req.startswith("git+")]
@@ -27,11 +27,12 @@ setup(
     description=DESCRIPTION,
     packages=find_packages(),
     install_requires=install_requires,
-    keywords=['python', 'snn', 'ai'],
+    keywords=["python", "snn", "ai"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Intended Audience :: Education",
         "Programming Language :: Python :: 3",
     ],
-    dependency_links=dependency_links
+    dependency_links=dependency_links,
+    data_files=glob.glob("sctn/resonators_params/parameters/*.json"),
 )
