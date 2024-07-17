@@ -34,5 +34,5 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     dependency_links=dependency_links,
-    data_files=glob.glob("sctn/resonators_params/parameters/*.json"),
+    data_files=glob.glob("sctn\\resonators_params\\parameters\\*.json"),
 )
