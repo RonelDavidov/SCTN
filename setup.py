@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages, glob
 
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 DESCRIPTION = "Spiking Continues Time Neuron"
 LONG_DESCRIPTION = "A Spiking Neural Network implementation using "
 
@@ -34,5 +34,6 @@ setup(
         "Programming Language :: Python :: 3",
     ],
     dependency_links=dependency_links,
+    include_package_data=True,
     data_files=glob.glob("sctn\\resonators_params\\parameters\\*.json"),
 )
