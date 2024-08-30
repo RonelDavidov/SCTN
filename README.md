@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-pike Continuous Time Neuron (SCTN) is a novel Spiking Neural Network (SNN) architecture designed to advance the field of neuromorphic computing. SCTN,
+Spike Continuous Time Neuron (SCTN) is a novel Spiking Neural Network (SNN) architecture designed to advance the field of neuromorphic computing. SCTN,
 short for Spiking Continuous Time Neuron, leverages the dynamics of spiking neurons to process information in a manner
 that closely mimics biological neural networks. This repository offers a comprehensive implementation of SCTN, providing
 researchers and developers with tools to explore and utilize this cutting-edge SNN framework for various applications in
