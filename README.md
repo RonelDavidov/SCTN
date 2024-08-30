@@ -76,6 +76,7 @@ pip install sctn
 ```
 ## Citation
 If you use our work in your research, please cite it using the following BibTex entry:
+```
 @article{bensimon2021new,
   title={A new sctn digital low power spiking neuron},
   author={Bensimon, Moshe and Greenberg, Shlomo and Ben-Shimol, Yehuda and Haiut, Moshe},
@@ -86,3 +87,4 @@ If you use our work in your research, please cite it using the following BibTex 
   year={2021},
   publisher={IEEE}
 }
+```
