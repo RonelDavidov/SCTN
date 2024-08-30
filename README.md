@@ -2,7 +2,7 @@
 
 --------------------------------------------------------------------------------
 
-SCTN is a novel Spiking Neural Network (SNN) architecture designed to advance the field of neuromorphic computing. SCTN,
+pike Continuous Time Neuron (SCTN) is a novel Spiking Neural Network (SNN) architecture designed to advance the field of neuromorphic computing. SCTN,
 short for Spiking Continuous Time Neuron, leverages the dynamics of spiking neurons to process information in a manner
 that closely mimics biological neural networks. This repository offers a comprehensive implementation of SCTN, providing
 researchers and developers with tools to explore and utilize this cutting-edge SNN framework for various applications in
@@ -74,3 +74,15 @@ Run the following to install
 ```
 pip install sctn
 ```
+## Citation
+If you use our work in your research, please cite it using the following BibTex entry:
+@article{bensimon2021new,
+  title={A new sctn digital low power spiking neuron},
+  author={Bensimon, Moshe and Greenberg, Shlomo and Ben-Shimol, Yehuda and Haiut, Moshe},
+  journal={IEEE Transactions on Circuits and Systems II: Express Briefs},
+  volume={68},
+  number={8},
+  pages={2937--2941},
+  year={2021},
+  publisher={IEEE}
+}
