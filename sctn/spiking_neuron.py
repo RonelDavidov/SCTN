@@ -40,6 +40,10 @@ spec = OrderedDict([
     ('log_membrane_potential', boolean),
     ('_membrane_potential_graph', float32[:]),
     ('membrane_sample_max_window', float32[:]),
+
+    ('Tw',int32),
+    ('layer_index', int32),
+
 ])
 
 IDENTITY = 0
