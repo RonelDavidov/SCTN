@@ -41,6 +41,7 @@ spec = OrderedDict([
     ('_membrane_potential_graph', float32[:]),
     ('membrane_sample_max_window', float32[:]),
 
+
     ('Tw',int32),
     ('threshold_initial',int32),
     ('use_dynamic_threshold', boolean),
